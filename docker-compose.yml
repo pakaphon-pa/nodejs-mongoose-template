@@ -1,0 +1,35 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - "./storage/mongo-volume:/data/db:rw"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27018:27017"
+    networks:
+      - express_network
+  api:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3002:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: "development"
+    networks:
+      - express_network
+
+volumes:
+  storage:
+
+networks:
+  express_network:
+    driver: bridge
